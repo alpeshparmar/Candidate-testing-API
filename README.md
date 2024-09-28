@@ -68,5 +68,13 @@ After Login Open the Dashboard
     Implement functionality to create new books associated with the selected author.
     Provide an option to remove books from the author’s list as needed.
 
+7. Command for create Author
+
+    In Main Path try with command :
+    php artisan author:add author:add {first_name} {last_name} {birthday} {biography} {gender} {place_of_birth}
+
+    Example :
+    php artisan author:add "Test" "User" "07-12-2000" "An author biography" "male" "New York"
+
 
 

@@ -9,11 +9,15 @@ class CandidateTestingApiClient
 {
     protected $client;
     protected $baseUrl;
+    protected $commandClient;
 
     public function __construct()
     {
         $this->client = new Client();
         $this->baseUrl = env('CANDIDATE_TESTING_API_URL');
+        $this->commandClient = new Client([
+            'base_uri' => $this->baseUrl,
+        ]);
     }
 
     /**
@@ -118,7 +122,7 @@ class CandidateTestingApiClient
     public function deleteAuthor($id)
     {
         try {
-            $response = $this->client->delete("{$this->baseUrl}/authors/{$id}", [
+            $response = $this->client->delete("{$this->baseUrl}/v2/authors/{$id}", [
                 'headers' => [
                     'Authorization' => 'Bearer ' . session('api_token'),
                     'Accept' => 'application/json',
@@ -187,5 +191,22 @@ class CandidateTestingApiClient
             Log::error('Failed to delete book: ' . $e->getMessage());
             return false;
         }
+    }
+
+    public function addAuthor(array $authorData, $apiToken)
+    {
+        // Call the API endpoint to add an author
+        $response = $this->commandClient->post('/api/v2/authors', [
+            'json' => $authorData,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $apiToken, // Use the passed API token
+            ],
+        ]);
+        // Check if the response is successful
+        if ($response->getStatusCode() === 200) { // Assuming 201 is the success code
+            return json_decode($response->getBody(), true);
+        }
+
+        return false; // Return false if the request failed
     }
 }
